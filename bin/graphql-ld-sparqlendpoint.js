@@ -14,17 +14,29 @@ const graphql_ld_1 = require("graphql-ld");
 const minimist = require("minimist");
 const QueryEngineSparqlEndpoint_1 = require("../lib/QueryEngineSparqlEndpoint");
 const args = minimist(process.argv.slice(2));
+const homeDir=require('os').homedir();
+const desktop=`${homeDir}/Desktop`;
 if (args._.length !== 3 || args.h || args.help) {
-    process.stderr.write(`usage: graphql-ld-sparqlendpoint [--help] context query endpoint
-  context:  a JSON object, e.g.
-            { "hero": "http://example.org/hero", "name": "http://example.org/name" }
-            or the path to such a context file
-  query:    a GraphQL query, e.g.
-            { hero { name } }
-            or the path to such a query file
-  endpoint: A SPARQL endpoint URL, e.g. http://dbpedia.org/sparql
-`);
+    if(args._.length !== 2) {
+        process.stderr.write(`usage: graphql-ld-sparqlendpoint [--help] context query endpoint
+    context:  a JSON object, e.g.
+                { "hero": "http://example.org/hero", "name": "http://example.org/name" }
+                or the path to such a context file
+    query:    a GraphQL query, e.g.
+                { hero { name } }
+                or the path to such a query file
+    endpoint: A SPARQL endpoint URL, e.g. http://dbpedia.org/sparql
+    `);
     process.exit(1);
+    }
+
+    else {
+        process.stderr.write('Default context at Desktop ---> contextD.jsonld is being used\n');
+        // console.log(args._[0])
+        args._.unshift(`${desktop}/contextD.jsonld`)
+        // console.log(args)
+        // process.exit(1);
+    }
 }
 // allow both files as direct JSON objects for context
 const context = JSON.parse(fs.existsSync(args._[0]) ? fs.readFileSync(args._[0], 'utf8') : args._[0]);
